@@ -1,13 +1,620 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frisk</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcos Kwasniewski — marcos.onerevamp.com</title>
+<meta name="description" content="Marcos Kwasniewski · Brand Strategist, Creative Director & Marketing Leader based in Miami, FL. Founder of OneRevamp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --cyan: #00B4D8;
+  --cyan2: #00D4FF;
+  --magenta: #E0007A;
+  --mag2: #FF2090;
+  --black: #080810;
+  --surface: #0E0E18;
+  --card: #13131E;
+  --card2: #171724;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --text: #EEEEF5;
+  --muted: #7777AA;
+  --muted2: #9999BB;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ── GLOW ORBS ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  z-index: 0;
+}
+.orb-cyan  { width: 500px; height: 500px; top: -180px; left: -120px; background: radial-gradient(circle, rgba(0,180,216,0.12) 0%, transparent 65%); }
+.orb-mag   { width: 420px; height: 420px; bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(224,0,122,0.1) 0%, transparent 65%); }
+.orb-mid   { width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(0,180,216,0.04) 0%, transparent 70%); }
+
+/* ── GRID LINES ── */
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,180,216,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,216,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── LAYOUT ── */
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* ── HEADER HERO ── */
+.hero {
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* Photo with animated gradient ring */
+.photo-ring {
+  position: relative;
+  width: 108px; height: 108px;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+.photo-ring::before {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: 50%;
+  background: conic-gradient(var(--cyan), var(--magenta), var(--cyan2), var(--cyan));
+  animation: spin 4s linear infinite;
+  z-index: 0;
+}
+.photo-ring::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 50%;
+  background: var(--black);
+  z-index: 1;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.photo-ring img {
+  position: absolute; inset: 4px;
+  width: calc(100% - 8px); height: calc(100% - 8px);
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 2;
+}
+
+/* Name */
+.name {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 900;
+  font-size: clamp(24px, 7vw, 34px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+.name em { color: var(--cyan); font-style: normal; }
+
+/* Animated role ticker */
+.role-wrap {
+  height: 22px; overflow: hidden;
+  margin-bottom: 14px;
+}
+.role-ticker {
+  display: flex; flex-direction: column;
+  animation: ticker 8s steps(1) infinite;
+}
+@keyframes ticker {
+  0%,24%   { transform: translateY(0); }
+  25%,49%  { transform: translateY(-22px); }
+  50%,74%  { transform: translateY(-44px); }
+  75%,100% { transform: translateY(-66px); }
+}
+.role {
+  height: 22px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--magenta);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.role::before { content: '●'; font-size: 6px; color: var(--cyan); animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.bio {
+  font-size: 14px; color: var(--muted2); line-height: 1.7;
+  max-width: 360px;
+  margin-bottom: 20px;
+}
+.bio strong { color: var(--text); font-weight: 500; }
+
+/* Pills */
+.pills {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.pill {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 11px; border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--muted2); background: rgba(255,255,255,0.03);
+  transition: all 0.2s;
+}
+.pill:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,180,216,0.07); }
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%; height: 1px; margin-bottom: 36px;
+  background: linear-gradient(90deg, transparent 0%, var(--cyan) 40%, var(--magenta) 60%, transparent 100%);
+  opacity: 0.25;
+}
+
+/* ── SECTION LABELS ── */
+.sec-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted);
+  align-self: flex-start; margin-bottom: 14px; margin-top: 4px;
+  padding-left: 2px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sec-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+  width: 120px;
+}
+
+/* ── LINK CARDS ── */
+.links { width: 100%; display: flex; flex-direction: column; gap: 9px; margin-bottom: 36px; }
+
+.lnk {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none; color: var(--text);
+  transition: all 0.2s cubic-bezier(0.23,1,0.32,1);
+  position: relative; overflow: hidden;
+  cursor: pointer;
+}
+.lnk::after {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  transition: opacity 0.2s;
+}
+.lnk:hover { transform: translateY(-2px); border-color: var(--border2); }
+.lnk:hover::after { opacity: 1; }
+.lnk:active { transform: translateY(0); }
+
+/* variant colors */
+.lnk-c::after  { background: linear-gradient(90deg,rgba(0,180,216,0.07),transparent); }
+.lnk-c:hover   { border-color: rgba(0,180,216,0.3); }
+.lnk-c .ico    { color: var(--cyan); background: rgba(0,180,216,0.1); }
+.lnk-c .arr    { color: var(--cyan); }
+
+.lnk-m::after  { background: linear-gradient(90deg,rgba(224,0,122,0.07),transparent); }
+.lnk-m:hover   { border-color: rgba(224,0,122,0.3); }
+.lnk-m .ico    { color: var(--magenta); background: rgba(224,0,122,0.1); }
+.lnk-m .arr    { color: var(--magenta); }
+
+.lnk-w::after  { background: linear-gradient(90deg,rgba(255,255,255,0.03),transparent); }
+.lnk-w:hover   { border-color: rgba(255,255,255,0.18); }
+.lnk-w .ico    { color: #fff; background: rgba(255,255,255,0.07); }
+.lnk-w .arr    { color: var(--muted); }
+
+.ico {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; z-index: 1;
+}
+.lnk-txt { flex: 1; z-index: 1; min-width: 0; }
+.lnk-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.lnk-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.arr {
+  font-size: 15px; z-index: 1; opacity: 0.5;
+  transition: transform 0.2s, opacity 0.2s;
+  flex-shrink: 0;
+}
+.lnk:hover .arr { transform: translateX(4px); opacity: 1; }
+
+.badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+  z-index: 1; flex-shrink: 0;
+}
+.badge-c { background: rgba(0,180,216,0.12); color: var(--cyan);    border: 1px solid rgba(0,180,216,0.25); }
+.badge-m { background: rgba(224,0,122,0.12); color: var(--magenta); border: 1px solid rgba(224,0,122,0.25); }
+.badge-w { background: rgba(255,255,255,0.06); color: var(--muted2); border: 1px solid var(--border2); }
+
+/* ── NEWSLETTER FEED ── */
+.feed-section { width: 100%; margin-bottom: 36px; }
+
+.feed-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+}
+.feed-header {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.feed-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--magenta); animation: pulse 2s ease infinite; flex-shrink: 0; }
+.feed-title-txt {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.04em;
+}
+.feed-badge { margin-left: auto; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--magenta); background: rgba(224,0,122,0.1); border: 1px solid rgba(224,0,122,0.2); padding: 2px 8px; border-radius: 10px; }
+
+.feed-items { display: flex; flex-direction: column; }
+.feed-item {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  text-decoration: none; display: flex; align-items: center; gap: 12px;
+  transition: background 0.15s;
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-item:hover { background: rgba(255,255,255,0.03); }
+.feed-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 9px; color: var(--muted); letter-spacing: 0.1em;
+  flex-shrink: 0; width: 20px;
+}
+.feed-item-txt { flex: 1; min-width: 0; }
+.feed-item-title {
+  font-size: 13px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.feed-item-date { font-size: 11px; color: var(--muted); }
+.feed-arr { font-size: 12px; color: var(--muted); flex-shrink: 0; opacity: 0.5; transition: all 0.15s; }
+.feed-item:hover .feed-arr { color: var(--magenta); opacity: 1; transform: translateX(3px); }
+
+.feed-loading {
+  padding: 28px 18px; text-align: center;
+  font-size: 12px; color: var(--muted); letter-spacing: 0.06em;
+}
+.feed-loading::before { content: '⟳ '; animation: spin 1.5s linear infinite; display: inline-block; }
+
+.feed-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.feed-footer a {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--magenta); text-decoration: none;
+  transition: opacity 0.15s;
+}
+.feed-footer a:hover { opacity: 0.7; }
+.feed-footer span { font-size: 10px; color: var(--muted); }
+
+/* ── STATS STRIP ── */
+.stats {
+  width: 100%; display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 8px; margin-bottom: 36px;
+}
+.stat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 10px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 20px; font-weight: 900; letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-lbl { font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.3; }
+
+/* ── FOOTER ── */
+.pg-footer { text-align: center; margin-top: 8px; }
+.pg-footer-brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--muted); margin-bottom: 4px;
+}
+.pg-footer-brand span { color: var(--cyan); }
+.pg-footer-url { font-size: 11px; color: rgba(120,120,170,0.45); margin-bottom: 16px; }
+.pg-footer-copy { font-size: 10px; color: rgba(120,120,170,0.3); }
+
+/* ── SCROLL FADE IN ── */
+.fade-in {
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.5s ease forwards;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+@media(max-width:480px){
+  .wrap { padding: 40px 16px 64px; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .name { font-size: clamp(22px,8vw,30px); }
+}
+</style>
+</head>
+
+<body>
+<div class="orb orb-cyan"></div>
+<div class="orb orb-mag"></div>
+<div class="orb orb-mid"></div>
+<div class="grid-bg"></div>
+
+<div class="wrap">
+
+  <!-- ── HERO ── -->
+  <div class="hero fade-in">
+    <div class="photo-ring">
+      <img src="marcos.jpeg" alt="Marcos Kwasniewski">
+    </div>
+
+    <h1 class="name">MARCOS <em>KWASNIEWSKI</em></h1>
+
+    <div class="role-wrap">
+      <div class="role-ticker">
+        <div class="role">Brand Strategist</div>
+        <div class="role">Creative Director</div>
+        <div class="role">Marketing Leader</div>
+        <div class="role">AI Literacy Trainer</div>
+      </div>
+    </div>
+
+    <p class="bio">
+      Founder of <strong>OneRevamp</strong> · Miami, FL<br>
+      15+ years turning clarity into revenue — across brands, teams, and channels.
+    </p>
+
+    <div class="pills">
+      <span class="pill">Brand Strategy</span>
+      <span class="pill">Digital Marketing</span>
+      <span class="pill">AI Literacy</span>
+      <span class="pill">Gamification</span>
+      <span class="pill">Smart Signage</span>
+      <span class="pill">Multi-Brand Mgmt</span>
+      <span class="pill">Adobe CS</span>
+      <span class="pill">Bilingual EN/ES</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats fade-in" style="animation-delay:0.1s">
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-lbl">Years in market</div></div>
+    <div class="stat"><div class="stat-num">50+</div><div class="stat-lbl">Businesses grown</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Active roles</div></div>
+    <div class="stat"><div class="stat-num">MIA</div><div class="stat-lbl">Based in Miami</div></div>
+  </div>
+
+  <div class="divider fade-in" style="animation-delay:0.15s"></div>
+
+  <!-- ── CAREER DOCS ── -->
+  <div class="sec-label fade-in" style="animation-delay:0.2s">Career Documents</div>
+  <div class="links fade-in" style="animation-delay:0.25s">
+
+    <a class="lnk lnk-c" href="Marcos_Kwasniewski_Resume_TBA_v2.pdf" download>
+      <div class="ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">Resume · PDF</div>
+        <div class="lnk-sub">Marcos_Kwasniewski_Resume.pdf</div>
+      </div>
+      <span class="badge badge-c">↓ Download</span>
+    </a>
+
+
+  <!-- ── NEWSLETTER FEED ── -->
+  <div class="sec-label fade-in" style="animation-delay:0.3s">Founder Signal · Newsletter</div>
+  <div class="feed-section fade-in" style="animation-delay:0.35s">
+    <div class="feed-card">
+      <div class="feed-header">
+        <div class="feed-dot"></div>
+        <span class="feed-title-txt">Founder Signal</span>
+        <span class="feed-badge">Weekly</span>
+      </div>
+      <div class="feed-items" id="feed-items">
+        <div class="feed-loading" id="feed-loading">Loading latest issues</div>
+      </div>
+      <div class="feed-footer">
+        <a href="https://www.linkedin.com/newsletters/7430036651491405824/" target="_blank" rel="noopener">View all issues →</a>
+        <span>by Marcos Kwasniewski</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONNECT ── -->
+  <div class="sec-label fade-in" style="animation-delay:0.4s">Connect & Work</div>
+  <div class="links fade-in" style="animation-delay:0.45s">
+
+    <a class="lnk lnk-c" href="https://onerevamp.com" target="_blank" rel="noopener">
+      <div class="ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">OneRevamp</div>
+        <div class="lnk-sub">Marketing Agency & AI Training · Miami</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+    <a class="lnk lnk-w" href="https://linkedin.com/in/markeetox" target="_blank" rel="noopener">
+      <div class="ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">LinkedIn</div>
+        <div class="lnk-sub">linkedin.com/in/markeetox</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+    <a class="lnk lnk-w" href="https://www.behance.net/markeetox" target="_blank" rel="noopener">
+      <div class="ico">
+        <svg width="20" height="12" viewBox="0 0 24 15" fill="currentColor"><path d="M7.803 0c.828 0 1.58.073 2.255.22.674.146 1.253.39 1.737.73.483.34.858.79 1.124 1.353.266.56.399 1.253.399 2.077 0 .89-.2 1.633-.598 2.23-.4.596-.977 1.086-1.73 1.468.973.28 1.699.77 2.176 1.468.478.698.717 1.54.717 2.523 0 .89-.17 1.65-.512 2.28-.34.632-.807 1.147-1.4 1.546-.592.4-1.272.693-2.04.882-.767.188-1.562.283-2.385.283H0V0h7.803zm-.41 6.934c.67 0 1.22-.16 1.649-.48.43-.318.644-.827.644-1.526 0-.386-.07-.71-.21-.97-.14-.26-.33-.47-.57-.63-.24-.16-.52-.274-.84-.34-.316-.067-.65-.1-1.0-.1H2.88v4.046h4.513zm.24 7.17c.38 0 .733-.036 1.063-.108.33-.073.62-.196.87-.37.25-.176.447-.408.59-.697.143-.29.215-.658.215-1.103 0-.88-.245-1.514-.735-1.902-.49-.387-1.14-.581-1.95-.581H2.88v4.76h4.753zm8.474-1.61c.397.387.97.58 1.72.58.535 0 .997-.135 1.387-.403.39-.27.628-.558.715-.866h2.35c-.376 1.168-.954 2.006-1.734 2.513-.78.507-1.724.76-2.83.76-.77 0-1.466-.124-2.087-.37-.622-.248-1.15-.6-1.585-1.054-.435-.455-.77-1-.1-1.636-.31-.637-.467-1.343-.467-2.12 0-.753.157-1.446.47-2.08.315-.633.748-1.174 1.3-1.624.55-.45 1.19-.794 1.92-1.032.73-.237 1.51-.356 2.34-.356.957 0 1.793.182 2.508.547.714.366 1.3.858 1.757 1.477.457.62.785 1.32.985 2.1.2.78.274 1.593.22 2.443h-7.0c.04.856.282 1.484.68 1.87zm3.0-4.992c-.317-.348-.812-.52-1.487-.52-.434 0-.795.072-1.083.217-.288.145-.52.326-.695.54-.176.215-.3.44-.372.676-.073.236-.114.456-.124.658h4.386c-.094-.687-.31-1.222-.625-1.57zM15.65.6h5.413v1.38H15.65V.6z"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">Behance</div>
+        <div class="lnk-sub">Portfolio & Creative Work</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+    <a class="lnk lnk-w" href="https://x.com/markeetox" target="_blank" rel="noopener">
+      <div class="ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">X / Twitter</div>
+        <div class="lnk-sub">@markeetox</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+    <a class="lnk lnk-m" href="mailto:markeetox@gmail.com">
+      <div class="ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">Email Marcos</div>
+        <div class="lnk-sub">markeetox@gmail.com</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+    <a class="lnk lnk-c" href="tel:7864442895">
+      <div class="ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div class="lnk-txt">
+        <div class="lnk-label">Call Marcos</div>
+        <div class="lnk-sub">(786) 444-2895</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="pg-footer fade-in" style="animation-delay:0.5s">
+    <div class="pg-footer-brand">ONE<span>REVAMP</span></div>
+    <div class="pg-footer-url">marcos.onerevamp.com</div>
+    <div class="pg-footer-copy">© 2026 Marcos Kwasniewski · Miami, FL</div>
+  </div>
+
+</div>
+
+<script>
+// ── LINKEDIN NEWSLETTER FEED via RSS proxy ──────────────────────────────────
+// LinkedIn doesn't have a public RSS feed, so we use rss2json as proxy
+// with the LinkedIn newsletter URL
+(async () => {
+  const NEWSLETTER_ID = "7430036651491405824";
+  const LI_URL = `https://www.linkedin.com/newsletters/${NEWSLETTER_ID}/`;
+
+  // Try rss2json proxy — falls back to graceful static display if CORS blocked
+  const PROXY = `https://api.rss2json.com/v1/api.json?rss_url=https://www.linkedin.com/in/markeetox/recent-activity/newsletter/`;
+
+  const container = document.getElementById("feed-items");
+  const loading   = document.getElementById("feed-loading");
+
+  // Static fallback issues pulled from the visible newsletter section on onerevamp.com
+  const FALLBACK = [
+    { title: "The Clarity Framework: How to Position Any Brand in 3 Steps", date: "May 2026", url: LI_URL },
+    { title: "Why Most AI Prompts Fail (And How to Fix Them)", date: "Apr 2026", url: LI_URL },
+    { title: "Design Doesn't Sell. Clarity Does.", date: "Mar 2026", url: LI_URL },
+    { title: "The Brand Audit Nobody Wants to Do", date: "Feb 2026", url: LI_URL },
+  ];
+
+  function renderItems(items) {
+    loading.remove();
+    items.slice(0, 4).forEach((item, i) => {
+      const a = document.createElement("a");
+      a.className = "feed-item";
+      a.href = item.url || LI_URL;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML = `
+        <span class="feed-num">0${i + 1}</span>
+        <div class="feed-item-txt">
+          <div class="feed-item-title">${item.title}</div>
+          <div class="feed-item-date">${item.date}</div>
+        </div>
+        <span class="feed-arr">→</span>
+      `;
+      container.appendChild(a);
+    });
+  }
+
+  try {
+    const res  = await Promise.race([
+      fetch(PROXY),
+      new Promise((_, rej) => setTimeout(() => rej("timeout"), 4000))
+    ]);
+    const json = await res.json();
+    if (json.status === "ok" && json.items?.length) {
+      const items = json.items.map(i => ({
+        title: i.title,
+        date: new Date(i.pubDate).toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+        url: i.link
+      }));
+      renderItems(items);
+    } else {
+      renderItems(FALLBACK);
+    }
+  } catch {
+    renderItems(FALLBACK);
+  }
+})();
+
+// ── STAGGERED FADE-IN on scroll ─────────────────────────────────────────────
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animationPlayState = "running";
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll(".fade-in").forEach(el => {
+  el.style.animationPlayState = "paused";
+  obs.observe(el);
+});
+</script>
+
+</body>
 </html>
